@@ -1,0 +1,13 @@
+####################
+# Unreal Generated #
+####################
+Escape/Intermediate/
+Escape/Saved/
+Escape/Binaries/
+Escape/Build/
+Escape/Content/StarterContent/
+
+##########################
+# VisualStudio Generated #
+##########################
+Escape/Escape.VC.db
