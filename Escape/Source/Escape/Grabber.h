@@ -35,8 +35,21 @@ private:
 	// The physical handler of the owner
 	UPhysicsHandleComponent* PhysicalHandler = nullptr;
 
+	/// Function of find the physical handler component
+	void FindPhysicalHandlerComponent();
+
 	// The input component
 	UInputComponent* InputComponent = nullptr;
 
-	void Grab();
+	/// Function of find the input component
+	void FindInputComponent();
+
+	/// Press the grab button
+	void GrabPressed();
+
+	/// Find the first object during the line tracing
+	FHitResult FindTheFirstReachingObject();
+
+	/// Release the grab button
+	void GrabReleased();
 };
