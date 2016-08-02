@@ -31,4 +31,12 @@ private:
 	float LineReach = 100.0f;
 	// The end point of the debug line
 	FVector EndPointOfLine;
+
+	// The physical handler of the owner
+	UPhysicsHandleComponent* PhysicalHandler = nullptr;
+
+	// The input component
+	UInputComponent* InputComponent = nullptr;
+
+	void Grab();
 };

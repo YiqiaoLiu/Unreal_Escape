@@ -21,8 +21,24 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	// Find the physical handler of the owner
+	PhysicalHandler = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (PhysicalHandler) {
+		UE_LOG(LogTemp, Warning, TEXT("%s has a physical handle component."), *GetOwner()->GetName());
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("%s MISSING a physical hanle component!"), *GetOwner()->GetName());
+	}
+
+	// Find the input component of the owner
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent) {
+		UE_LOG(LogTemp, Warning, TEXT("%s has a input component."), *GetOwner()->GetName());
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("%s MISSING a input component!"), *GetOwner()->GetName());
+	}
+
 }
 
 
@@ -49,5 +65,33 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 		0.0f,
 		10.0f
 	);
+
+	// The variable store the hit result info
+	FHitResult HitResInfo;
+
+	// Some settings of the line tracing
+	FCollisionQueryParams CollisionParams(FName(TEXT("")), false, GetOwner());
+
+	// Do the line tracing
+	GetWorld()->LineTraceSingleByObjectType(
+					HitResInfo,
+					ViewPortLocation,
+					EndPointOfLine,
+					FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+					CollisionParams
+				);
+
+	// Log the result of the line tracing
+	AActor* HitActor = HitResInfo.GetActor();
+	if (HitActor) {
+		UE_LOG(LogTemp, Warning, TEXT("The hitting object's name is: %s"), *(HitActor->GetName()));
+	}
+
+	// Grab action binding test
+	InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+}
+
+void UGrabber::Grab() {
+	UE_LOG(LogTemp, Warning, TEXT("Grab check!"));
 }
 
