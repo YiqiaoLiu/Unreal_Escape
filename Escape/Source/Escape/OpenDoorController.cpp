@@ -32,25 +32,35 @@ void UOpenDoorController::TickComponent( float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
+	if (TriggerOpenDoorArea == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("Trigger volume * MISSING"));
+		return;
+	}
+
+	TotalMass = GetTheTotalOverlappingMass();
 	// If player enter the specific area, open the door
-	if (TriggerOpenDoorArea->IsOverlappingActor(PlayerObject)) {
-		OpenDoor();
+	if (GetTheTotalOverlappingMass() > 10.0f) {
+	
+		OpenReq.Broadcast();
 	}
-	if (GetWorld()->GetTimeSeconds() - LastOpenDoorTime > OpenDoorDelay) {
-		CloseDoor();
+	else {
+		CloseReq.Broadcast();
 	}
-}
-
-// Open & Close door function
-void UOpenDoorController::OpenDoor() {
-	ObjectOwner->SetActorRotation(FRotator(0.0f, OpenDegree, 0.0f));
-
-	// Set the last open time
-	LastOpenDoorTime = GetWorld()->GetTimeSeconds();
 }
 
 void UOpenDoorController::CloseDoor() {
-	ObjectOwner->SetActorRotation(FRotator(0.0f, 180.0f, 0.0f));
+	ObjectOwner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+}
+
+// Calculate the total mass of overlapping of the trigger volume
+float UOpenDoorController::GetTheTotalOverlappingMass() {
+	float MassResult = 0.0f;
+	TArray<AActor*> OverlappingArray;
+	TriggerOpenDoorArea->GetOverlappingActors(OverlappingArray);
+	for (AActor* overlap : OverlappingArray) {
+		MassResult += overlap->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+	}
+	return MassResult;
 }
 
 

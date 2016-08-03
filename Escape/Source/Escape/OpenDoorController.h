@@ -6,6 +6,8 @@
 #include "OpenDoorController.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorRequest);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ESCAPE_API UOpenDoorController : public UActorComponent
 {
@@ -21,8 +23,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// Open door operation
-	void OpenDoor();
+
 
 	// Close door operation
 	void CloseDoor();
@@ -33,20 +34,30 @@ private:
 
 	// The open degree of the door
 	UPROPERTY(EditAnywhere)
-		float OpenDegree = 120.0f;
+	float OpenDegree = 120.0f;
 
 	// The variable of the trigger area to open the door
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* TriggerOpenDoorArea;
+	ATriggerVolume* TriggerOpenDoorArea = nullptr;
 
 	// The player pawn
 	AActor* PlayerObject;
 
 	//Store last time open the door
-	float LastOpenDoorTime;
+	float LastOpenDoorTime = 0.0f;
 
 	// When player leave the trigger area, 0.5s the door will close automatically
 	UPROPERTY(EditAnywhere)
-		float OpenDoorDelay = 0.5f;
+	float OpenDoorDelay = 0.5f;
 
+	// Calculate the total mass overlapping the trigger volume
+	float GetTheTotalOverlappingMass();
+
+	float TotalMass = 0.0f;
+
+	UPROPERTY(BlueprintAssignable)
+	FDoorRequest OpenReq;
+
+	UPROPERTY(BlueprintAssignable)
+	FDoorRequest CloseReq;
 };
